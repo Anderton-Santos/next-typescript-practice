@@ -36,7 +36,7 @@ export function Tables({ tables }: tabs) {
                 ))}
 
                 <div
-                style={{ marginBottom: "1.5rem" }}>
+                    style={{ marginBottom: "1.5rem" }}>
                     {tables[tableIndex].content}
                 </div>
             </section>

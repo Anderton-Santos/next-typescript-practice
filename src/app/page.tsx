@@ -1,13 +1,13 @@
 
 
-import { FilterUserTwo } from "../../filterUserTwo";
+import ListProductPage from "./listProduct/index";
 
 
 export default function Home() {
   return (
     <div>
 
-    <FilterUserTwo/>
+    <ListProductPage/>
     </div>
   );
 }
