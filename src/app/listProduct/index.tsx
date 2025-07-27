@@ -1,115 +1,106 @@
 "use client"
 
-import { ProductProvider } from "./context/renderProductContext";
 import { useContext, useState } from "react"
-import { ProductContext } from "./context/renderProductContext";
+import { ProductProvider } from "./context/renderProductContext"
+import { ProductContext } from "./context/renderProductContext"
 
-
-export function RederProductCart() {
+export function RenderProductCart() {
     const {
         product,
-        addNewProduct,
-        updateNewProduct,
-        deleteNewProduct
+        HandleAdd,
+        HandleRemove,
+        UpdateTask
     } = useContext(ProductContext)
 
     const [input, setInput] = useState("")
     const [category, setCategory] = useState("")
-    const [editIndex, setEditIndex] = useState<null | number>(null)
+    const [editIndex, setEditIndex] = useState<null | string>(null)
 
-
-
-
-    const handleAdd = () => {
-        if (input.trim() === "") return
+    const addNewProduct = () => {
+        if (input.trim().length === 0) return
 
         if (editIndex !== null) {
-            const newItem = [...product]
-            updateNewProduct(newItem[editIndex].id, input)
+            UpdateTask(editIndex, input)
             setEditIndex(null)
             setInput("")
             return
-
         }
-        addNewProduct(input, category)
-        console.log(category)
-        setInput("")
 
+        HandleAdd(input, category)
+        setInput("")
     }
 
-    const handleEdit = (name: string, id: number) => {
+    const editTask = (id: string, name: string) => {
         setInput(name)
         setEditIndex(id)
     }
 
-    const categories = ["Eletronicos", "Roupas", "Livros"];
+    const categories = ["Eletronicos", "Roupas", "Livros"]
 
     return (
-
-
-        <div>
-            <div className="flex gap-4">
+        <div className="flex flex-col items-center justify-center">
+            <div className="flex gap-4 p-2">
                 <input
                     type="text"
-                    placeholder="Digite uma tarefa"
+                    className="p-2"
+                    placeholder="Digite seu Produto"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                 />
 
                 <select
-                    className="text-black"
-                    name=""
-                    id=""
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
+                    name=""
+                    id=""
+                    className="text-black"
                 >
-                    {/* <option value="Eletronicos">Eletronicos</option>
-                    <option value="Roupas">Roupas</option>
-                    <option value="Livros">Livros</option> */}
-
-                    {categories.map((cat) => (
-                        <option key={cat} value={cat}>{cat}</option>
+                    {categories.map((item, index) => (
+                        <option key={index} value={item}>{item}</option>
                     ))}
                 </select>
 
-                <button onClick={() => handleAdd()}>Add</button>
-
+                <button onClick={addNewProduct} className="bg-orange-600 p-1 rounded-2xl">
+                    {editIndex ? "Editar" : "Adicionar"}
+                </button>
             </div>
 
-
-            <section className="grid grid-cols-3 gap-8 w-full max-w-4xl mx-auto items-center h-full">
-                {categories.map((cat, index) => (
-
-                    <div key={index} className="bg-orange-300 h-[200px] ">
-                        <span>{cat}</span>
-                        <ul className="flex flex-col justify-center items-center">
+            <section className="flex gap-4">
+                {categories.map((item, index) => (
+                    <div key={index} className="bg-orange-500 w-[250px] h-[320px] text-center">
+                        <h2>{item}</h2>
+                        <ul>
                             {product
-                                .filter((prev) => prev.category === cat)
-                                .map((item, index) => (
-
-                                    <li key={item.id}>
-                                        <span className="flex gap-4">
-                                            {item.name}
-                                            <button onClick={() => handleEdit(item.name, index)}>E</button>
-                                            <button onClick={() => deleteNewProduct(item.id)}>X</button>
-                                        </span>
+                                .filter((prev) => prev.category === item)
+                                .map((item) => (
+                                    <li key={item.id} className="flex items-center justify-center gap-2">
+                                        <span>{item.name}</span>
+                                        <button
+                                            onClick={() => HandleRemove(item.id)}
+                                            className="bg-white rounded-full w-4 text-black"
+                                        >
+                                            X
+                                        </button>
+                                        <button
+                                            onClick={() => editTask(item.id, item.name)}
+                                            className="bg-black rounded-full w-4 text-white"
+                                        >
+                                            E
+                                        </button>
                                     </li>
-
                                 ))}
                         </ul>
                     </div>
                 ))}
             </section>
         </div>
-
     )
 }
-
 
 export default function ListProductPage() {
     return (
         <ProductProvider>
-            <RederProductCart />
+            <RenderProductCart />
         </ProductProvider>
-    );
+    )
 }

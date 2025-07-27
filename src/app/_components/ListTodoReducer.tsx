@@ -12,6 +12,7 @@ type Action =
   | { type: "ADD"; payload: string }
   | { type: "TOGGLE"; payload: string }
   | { type: "REMOVE"; payload: string }
+  | { type: "EDIT"; payload: { id: string; newTitle: string } }
   | { type: "LOAD"; payload: Todo[] };
 
 const todoReducer = (state: Todo[], action: Action): Todo[] => {
@@ -20,20 +21,22 @@ const todoReducer = (state: Todo[], action: Action): Todo[] => {
       return action.payload;
 
     case "ADD":
-      return [
-        ...state,
-        { id: crypto.randomUUID(), title: action.payload, done: false },
-      ];
+      return [...state, { id: crypto.randomUUID(), title: action.payload, done: false }];
 
     case "TOGGLE":
       return state.map((todo) =>
-        todo.id === action.payload
-          ? { ...todo, done: !todo.done }
-          : todo
+        todo.id === action.payload ? { ...todo, done: !todo.done } : todo
       );
 
     case "REMOVE":
       return state.filter((todo) => todo.id !== action.payload);
+
+    case "EDIT":
+      return state.map((todo) =>
+        todo.id === action.payload.id
+          ? { ...todo, title: action.payload.newTitle }
+          : todo
+      );
 
     default:
       return state;
@@ -44,8 +47,8 @@ export default function ListReducer() {
   const [todos, dispatch] = useReducer(todoReducer, []);
   const [input, setInput] = useState("");
   const [filter, setFilter] = useState<"all" | "done" | "pending">("all");
+  const [editingId, setEditingId] = useState<string | null>(null);
 
-  // Carrega tarefas do localStorage ao iniciar
   useEffect(() => {
     const data = localStorage.getItem("todos");
     if (data) {
@@ -53,16 +56,21 @@ export default function ListReducer() {
     }
   }, []);
 
-  // Salva no localStorage quando a lista muda
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos));
   }, [todos]);
 
-  const handleAdd = () => {
-    if (input.trim()) {
+  const handleAddOrEdit = () => {
+    if (!input.trim()) return;
+
+    if (editingId) {
+      dispatch({ type: "EDIT", payload: { id: editingId, newTitle: input } });
+      setEditingId(null);
+    } else {
       dispatch({ type: "ADD", payload: input });
-      setInput("");
     }
+
+    setInput("");
   };
 
   const filteredTodos = todos.filter((todo) => {
@@ -81,7 +89,9 @@ export default function ListReducer() {
           onChange={(e) => setInput(e.target.value)}
           placeholder="Nova tarefa"
         />
-        <button onClick={handleAdd}>Adicionar</button>
+        <button onClick={handleAddOrEdit}>
+          {editingId ? "Salvar edição" : "Adicionar"}
+        </button>
       </div>
 
       <div style={{ margin: "10px 0" }}>
@@ -96,9 +106,7 @@ export default function ListReducer() {
             <input
               type="checkbox"
               checked={todo.done}
-              onChange={() =>
-                dispatch({ type: "TOGGLE", payload: todo.id })
-              }
+              onChange={() => dispatch({ type: "TOGGLE", payload: todo.id })}
             />
             <span
               style={{
@@ -109,12 +117,19 @@ export default function ListReducer() {
               {todo.title}
             </span>
             <button
-              onClick={() =>
-                dispatch({ type: "REMOVE", payload: todo.id })
-              }
+              onClick={() => dispatch({ type: "REMOVE", payload: todo.id })}
               style={{ marginLeft: 12 }}
             >
               ❌
+            </button>
+            <button
+              onClick={() => {
+                setInput(todo.title);
+                setEditingId(todo.id);
+              }}
+              style={{ marginLeft: 8 }}
+            >
+              ✏️
             </button>
           </li>
         ))}

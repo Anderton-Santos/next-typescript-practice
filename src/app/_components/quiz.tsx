@@ -1,58 +1,3 @@
-// "use client"
-
-// import { useState } from "react";
-
-// type questionProps = {
-//     question: string;
-//     answer: boolean
-// }
-
-
-// const HandleQuestions = () =>{
-
-//     const questions: questionProps[] = [
-//         {"question": "O React é uma biblioteca para construção de interfaces?", answer: true },
-//         {"question": "O JavaScript é uma linguagem compilada?", answer: false },
-//         {"question": "O HTML é uma linguagem de programação?", answer: false },
-//         {"question": "O CSS é usado para estilizar páginas web?", answer: true },
-//     ]
-
-//     const [questionIndex, setQuestionIndex] = useState(0)
-//     const [score, setScore] = useState(0)
-//     const [result, setResult] = useState(false)
-
-//     const handleUser = (res: boolean) =>{
-//         if(res === questions[questionIndex].answer)
-//             setScore(score + 1)
-
-
-//         if(questionIndex + 1 < questions.length){
-//             setQuestionIndex(questionIndex + 1)
-//             }else{
-//                 setResult(true)
-//             }
-//         }
-
-//         return(
-//             <div>
-//                 {!result ? (
-//                     <div>
-//                     <h2>{questions[questionIndex].question}</h2>
-//                     <button onClick={() =>handleUser(true)}>Verdadeiro</button>
-//                     <button onClick={() => handleUser(false)}>Falso</button>
-//                     </div>
-//                 ) : (
-//                     <div>
-//                         <h2>Voce acertou {score} de {questions.length} Perguntas</h2>
-//                     </div>
-//                 )}
-//             </div>
-//         )
-
-// }
-
-// export default HandleQuestions
-
 
 
 "use client"
@@ -64,158 +9,106 @@ export function Quiz() {
     const [questionindex, setQuestionIndex] = useState(0)
     const [finished, setFinished] = useState(false)
 
-    interface QuestionsProps{
+    interface QuestionsProps {
         id: number,
         quiz: string,
         awner: boolean
     }
 
-    const Quest:QuestionsProps[] = [
+    const Quest: QuestionsProps[] = [
 
         {
             id: 1,
-            "quiz": "O goleiro Rogério Ceni marcou mais de 100 gols em sua carreira?",
-            awner: true,
+            quiz: "Qual clube o Flamengo enfrentou na semifinal da Libertadores de 1981?",
+            awner: false, // Era o Atlético-MG, mas foi um triangular com Deportivo Cali também (questão capciosa)
         },
-        {   id: 2,
-            "quiz": "Zinédine Zidane foi expulso na final da Copa do Mundo de 2006 por dar um carrinho violento?"
-            , awner: false
+        {
+            id: 2,
+            quiz: "O Flamengo conquistou seu primeiro título do Campeonato Carioca em 1912?",
+            awner: false, // O clube foi fundado em 1911 e só venceu o Carioca em 1914
         },
-        {   id: 3,
-            "quiz": "A Inglaterra venceu sua única Copa do Mundo em 1966?"
-            , awner: true
+        {
+            id: 3,
+            quiz: "O treinador que levou o Flamengo ao título da Libertadores de 1981 foi o Carlinhos?",
+            awner: false, // Foi Paulo César Carpegiani
         },
-        {   id:4,
-            "quiz": "Lionel Messi fez sua estreia profissional no Barcelona em 2007?"
-            , awner: false
+        {
+            id: 4,
+            quiz: "O Flamengo já venceu o Corinthians por mais de 5 gols em um jogo oficial?",
+            awner: true, // Já venceu por 5x1 (2000) e outras goleadas
         },
-        {   id:5,
-            "quiz": "A Juventus foi rebaixada para a segunda divisão italiana por envolvimento em escândalos de arbitragem?",
-            awner: true
+        {
+            id: 5,
+            quiz: "Em 2009, o Flamengo foi campeão brasileiro com Adriano como artilheiro?",
+            awner: true, // Sim, Adriano fez 19 gols
         },
+        {
+            id: 6,
+            quiz: "Zico jogou mais de 700 partidas com a camisa do Flamengo?",
+            awner: true, // Jogou 732 jogos
+        },
+        {
+            id: 7,
+            quiz: "O Flamengo já teve uma camisa com listras verticais como uniforme principal?",
+            awner: false, // Sempre usou listras horizontais
+        },
+        {
+            id: 8,
+            quiz: "O Flamengo ganhou a Taça Guanabara e o Campeonato Carioca invicto em 1996?",
+            awner: false, // Em 1996 perdeu o Carioca, apesar da boa campanha
+        },
+        {
+            id: 9,
+            quiz: "Petkovic marcou um gol de falta no último minuto da final do Carioca de 2001 contra o Vasco?",
+            awner: true, // Gol histórico que deu o título
+        },
+        {
+            id: 10,
+            quiz: "Em 2022, o Flamengo venceu a Libertadores e a Copa do Brasil no mesmo ano?",
+            awner: true, // Sim, venceu ambos
+        }
     ]
 
-    const HandleRes = (res:boolean):void =>{
-        const acerted = res === Quest[questionindex].awner
-        if (acerted){
-             setScore(prev => prev + 1)
+    function handleRes(item: boolean) {
+        const res = item === Quest[questionindex].awner
+        if (res) {
+            setScore(prev => prev + 1)
         }
 
-       if(questionindex + 1 < Quest.length){
-        setQuestionIndex(prev => prev + 1)
-       }else{
-        setFinished(true)
-       }
-
+        if (questionindex + 1 < Quest.length) {
+            setQuestionIndex(prev => prev + 1)
+        } else {
+            setFinished(true)
+        }
     }
+
 
 
     return (
         <div>
             <h1>Quiz Futebol</h1>
 
-           { !finished ? (
-             <section>
-                {Quest[questionindex].quiz}
+            <section className="flex flex-col items-center justify-center">
+                {!finished ? (
+                    <>
+                        <span>{Quest[questionindex].quiz}</span>
 
-                <div className="flex gap-6">
-                    <button onClick={() => HandleRes(true)}>Verdadeiro</button>
-                    <button onClick={() => HandleRes(false)}>Falso</button>
-                </div>
+
+                        <div className="flex gap-6">
+                            <button onClick={() => handleRes(true)}>Verdadeiro</button>
+                            <button onClick={() => handleRes(false)}>Falso</button>
+                        </div>
+                    </>
+
+                ) : (
+                    <span>Você acretou {score} de {Quest.length} perguntas</span>
+                )}
+
+
             </section>
-           ): (
-            <>
 
 
-            <span>Finalizado</span>
-            <span>Voce acertou {score} de {Quest.length} perguntas</span>
-
-            </>
-           )
-           }
 
         </div>
     )
 }
-
-
-
-// "use client"
-// import { useState } from "react"
-
-// export function Quiz() {
-
-//     const [score, setScore] = useState(0)
-//     const [index, setIndex] = useState(0)
-//     const [result, setResult] = useState(false)
-
-//     const Quest = [
-//         {
-//             id: 1,
-//             quiz: "A água ferve a 100°C ao nível do mar?",
-//             awner: true
-//         },
-//         { 
-//             id: 2,
-//             quiz: "O ser humano tem cinco corações?",
-//             awner: false
-//         },
-//         {
-//             id:3,
-//             quiz: "A capital da Austrália é Sydney",
-//             awner:false
-//         },
-//         {
-//             id:4,
-//             quiz: "O Sol é uma estrela?",
-//             awner: true
-//         },
-//         {
-//             id: 5,
-//             quiz: "O Brasil faz parte do continente africano?",
-//             awner:false
-//         },
-//         {
-//             id: 6,
-//             quiz: "A Amazônia é a maior floresta tropical do mundo?",
-//             awner: true
-//         }
-//     ]
-
-//     const handleRes = (res: boolean) =>{
-//         const acerted = res === Quest[index].awner
-//         if(acerted){
-//             setScore(prev => prev + 1)
-//         }
-
-//         if(index + 1 < Quest.length){
-//             setIndex(prev => prev + 1)
-//         }else{
-//             setResult(true)
-//         }
-//     }
-
-
-//     return (
-//         <div>
-//           <h1>Quiz</h1>
-
-//           <section>
-//             {!result ? (
-//                 <>
-//                 <h2>{Quest[index].quiz}</h2>
-//                 <section>
-//                     <button onClick={()=> handleRes(true)}>Verdadeiro</button>
-//                     <button onClick={()=> handleRes(false)}>Falso</button>
-//                 </section>
-//                 </>
-//             ): (
-//                 <div>
-//                     <span>Voce acertou {score} de {Quest.length} Perguntas</span>
-//                 </div>
-//             )}
-//           </section>
-
-//         </div>
-//     )
-// }

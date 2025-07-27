@@ -1,5 +1,7 @@
 
 
+import ListReducer from "./_components/ListTodoReducer";
+import { Quiz } from "./_components/quiz";
 import ListProductPage from "./listProduct/index";
 
 
@@ -7,7 +9,7 @@ export default function Home() {
   return (
     <div>
 
-    <ListProductPage/>
+    <Quiz/>
     </div>
   );
 }
